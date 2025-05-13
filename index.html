@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fullscreen Video Player</title>
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    overflow: hidden; /* Prevent scrollbars */
+  }
+
+  .video-container {
+    position: fixed; /* Make it stick to the viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000; /* Fallback background color */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    z-index: 1; /* Ensure it's behind controls if needed */
+  }
+
+  #custom-video {
+    display: block;
+    max-width: 100%; /* Ensure it doesn't exceed container width */
+    max-height: 100%; /* Ensure it doesn't exceed container height */
+  }
+
+  .controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 2; /* Ensure controls are on top */
+  }
+
+  .controls > div {
+    display: flex;
+    align-items: center;
+  }
+
+  .play-button, .redirect-button, .volume-button, .speed-button, .skip-button {
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+  }
+
+  .play-button::before {
+    content: "▶"; /* Play icon */
+  }
+
+  .play-button.playing::before {
+    content: "❚❚"; /* Pause icon */
+  }
+
+  input[type="range"] {
+    width: 80px;
+    margin-right: 10px;
+  }
+
+  .speed-options {
+    position: relative;
+  }
+
+  .speed-dropdown {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 5px 0;
+    display: none;
+    z-index: 10;
+  }
+
+  .speed-dropdown.open {
+    display: block;
+  }
+
+  .speed-dropdown button {
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 8px 15px;
+    display: block;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .speed-dropdown button:hover {
+    background-color: #222;
+  }
+</style>
+</head>
+<body>
+
+<div class="video-container">
+  <video id="custom-video">
+    <source src="https://ia800300.us.archive.org/23/items/reddit_cursedvideos_d697hq/reddit_cursedvideos_d697hq.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <div class="controls">
+    <div>
+      <button class="play-button" onclick="togglePlay()">Play</button>
+      <button class="skip-button" onclick="skipBackward()">&#8678; 10s</button>
+      <button class="volume-button">Volume</button>
+      <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+      <div class="speed-options">
+        <button class="speed-button" onclick="toggleSpeedOptions()">Speed</button>
+        <div class="speed-dropdown">
+          <button onclick="setPlaybackSpeed(0.5)">0.5x</button>
+          <button onclick="setPlaybackSpeed(1)">1x</button>
+          <button onclick="setPlaybackSpeed(1.5)">1.5x</button>
+          <button onclick="setPlaybackSpeed(2)">2x</button>
+        </div>
+      </div>
+      <button class="skip-button" onclick="skipForward()">10s &#8680;</button>
+    </div>
+    <div>
+      <button class="redirect-button" onclick="openNewTab('example.com')">Go to Home</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const video = document.getElementById('custom-video');
+  const playButton = document.querySelector('.play-button');
+  const volumeSlider = document.getElementById('volume-slider');
+  const speedButton = document.querySelector('.speed-button');
+  const speedDropdown = document.querySelector('.speed-dropdown');
+
+  function togglePlay() {
+    if (video.paused || video.ended) {
+      video.play();
+      playButton.classList.add('playing');
+    } else {
+      video.pause();
+      playButton.classList.remove('playing');
+    }
+  }
+
+  function openNewTab(url) {
+    window.open(url, '_blank');
+  }
+
+  volumeSlider.addEventListener('input', function() {
+    video.volume = volumeSlider.value;
+  });
+
+  function toggleSpeedOptions() {
+    speedDropdown.classList.toggle('open');
+  }
+
+  function setPlaybackSpeed(speed) {
+    video.playbackRate = speed;
+    speedDropdown.classList.remove('open');
+    speedButton.textContent = `Speed (${speed}x)`;
+  }
+
+  function skipBackward() {
+    video.currentTime -= 10;
+  }
+
+  function skipForward() {
+    video.currentTime += 10;
+  }
+
+  // Close speed dropdown when clicking outside
+  document.addEventListener('click', function(event) {
+    if (!speedOptions.contains(event.target) && speedDropdown.classList.contains('open')) {
+      speedDropdown.classList.remove('open');
+    }
+  });
+
+  const speedOptions = document.querySelector('.speed-options');
+</script>
+
+</body>
+</html>
